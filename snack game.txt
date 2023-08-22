@@ -1,0 +1,113 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Random;
+
+public class SnackGame extends Frame implements KeyListener {
+
+    private final int HEIGHT = 400;
+    private final int WIDTH = 400;
+    private final int DELAY = 100;
+
+    private Snack snack;
+    private Snack apple;
+    private Random random;
+
+    public SnackGame() {
+        setTitle("Snack Game");
+        setSize(WIDTH, HEIGHT);
+        addKeyListener(this);
+        random = new Random();
+
+        snack = new Snack(WIDTH / 2, HEIGHT / 2);
+        apple = new Snack(random.nextInt(WIDTH), random.nextInt(HEIGHT));
+
+        setVisible(true);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+
+        g.setColor(Color.RED);
+        g.fillOval(snack.x, snack.y, Snack.SIZE, Snack.SIZE);
+
+        g.setColor(Color.GREEN);
+        g.fillOval(apple.x, apple.y, Snack.SIZE, Snack.SIZE);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                snack.moveUp();
+                break;
+            case KeyEvent.VK_DOWN:
+                snack.moveDown();
+                break;
+            case KeyEvent.VK_LEFT:
+                snack.moveLeft();
+                break;
+            case KeyEvent.VK_RIGHT:
+                snack.moveRight();
+                break;
+        }
+
+        if (snack.collidesWith(apple)) {
+            apple.setX(random.nextInt(WIDTH));
+            apple.setY(random.nextInt(HEIGHT));
+            snack.grow();
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public static void main(String[] args) {
+        new SnackGame();
+    }
+}
+
+class Snack {
+
+    public static final int SIZE = 10;
+
+    private int x;
+    private int y;
+
+    public Snack(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void moveUp() {
+        y -= SIZE;
+    }
+
+    public void moveDown() {
+        y += SIZE;
+    }
+
+    public void moveLeft() {
+        x -= SIZE;
+    }
+
+    public void moveRight() {
+        x += SIZE;
+    }
+
+    public boolean collidesWith(Snack other) {
+        return x == other.x && y == other.y;
+    }
+
+    public void grow() {
+        SIZE += 10;
+    }
+}
